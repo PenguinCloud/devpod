@@ -1,0 +1,13 @@
+config:
+  dns.domain: devpod.penguintech.group
+  ipv4.address: 10.108.120.1/24
+  ipv4.dhcp: "true"
+  ipv4.dhcp.ranges: 10.108.120.2-10.108.120.200
+  ipv4.nat: "true"
+  ipv6.address: fd42:b34b:c13c:f3d4::1/64
+  ipv6.firewall: "true"
+description: ""
+name: lxdbr0
+type: bridge
+managed: "true"
+

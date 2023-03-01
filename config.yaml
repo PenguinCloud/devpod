@@ -1,0 +1,55 @@
+#cloud-config
+package_upgrade: true
+packages:
+  - build-essential
+  - net-tools
+  - tigervnc-standalone-server
+  - docker-compose
+  - git
+  - firefox
+  - docker.io
+  - nano
+  - python3-pip
+  - ansible
+  - wget
+  - apt-transport-https
+  - python3
+  - openssh-server
+  - libxcb-image0
+  - libxcb-keysyms1
+  - libxcb-render-util0
+  - libxcb-xkb1
+  - libxkbcommon-x11-0
+hostname: ptg-devpod
+fqdn: ptg-devpod.penuintech.group
+manage_etc_hosts: true
+# User setup
+users:
+ - name: devpod-user
+   sudo: ['ALL=(ALL) NOPASSWD:ALL']
+   groups: docker
+   lock_passwd: false
+   hashed_passwd: $6$rounds=4096$3a7.OdBQf$WRfAiEYJ8rbEsy4qJKcjW96h9uOjamJGldIobpOkPsthDnMLVxuDsCNUAWtmFtXf4lbHAzau69qIHrgzFU.2v1
+   shell: /bin/rbash
+runcmd:
+- dhclient eth0
+- wget https://download-cdn.jetbrains.com/python/pycharm-community-2022.1.1.tar.gz -O /usr/local/share/pycharm.tgz
+- cd /usr/local/share && tar -xvzf pycharm.tgz && mv pycharm-community-2022.1.1/ pycharm
+- ln -s /usr/local/share/pycharm/bin/pycharm.sh /usr/local/bin/pycharm
+- cp /usr/share/doc/util-linux/examples/securetty /etc/securetty
+- service ssh restart
+- apt purge lightdm gdm3 -y
+- apt install --no-install-recommends lubuntu-desktop -y && apt autoremove -y
+- echo "cd /home/devpod-user && su devpod-user" >> /root/.bashrc
+- mkdir -p /home/devpod-user/.vnc /home/devpod-user/.ssh /home/devpod-user/.local/share/applications/ /home/devpod-user/.local/share/JetBrains/PyCharmCE2022.1/
+- cp -rf /opt/ssh/* /home/devpod-user/.ssh/
+- cp -rf /opt/vnc/* /home/devpod-user/.vnc/
+- cp -f /opt/pycharm.desktop /home/devpod-user/.local/share/applications/
+- cp -f /opt/pycharm-plugins.tgz /home/devpod-user/.local/share/JetBrains/PyCharmCE2022.1/
+- echo 'alias exit="sudo pkill -9 bash"' >> /home/devpod-user/.bashrc
+- chown devpod-user:devpod-user /home/devpod-user -R
+- systemctl daemon-reload
+- systemctl enable vncserver@1
+- systemctl start vncserver@1
+- shutdown -r -t 45
+   #plain_text_passwd: DevelopmentTimeHereAtPTG

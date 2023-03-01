@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Name=PyCharms
+Name[en_US]=PyCharms
+Exec=/usr/local/bin/pycharm
+Comment[en_US]=Python Community IDE by JetBrains
+StartupNotify=true

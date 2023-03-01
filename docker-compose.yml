@@ -1,0 +1,44 @@
+---
+version: "2.4"
+services:
+  guacd:
+    image: guacamole/guacd
+    container_name: guacd
+    env_file: .env
+    ports:
+      - 127.0.0.1:4822:4822
+    networks:
+      - guac
+    restart: always
+  guacamole:
+    image: guacamole/guacamole
+    #image: oznu/guacamole
+    #volumes:
+    #  - /home/guacamole/tomcat
+    container_name: guac
+    env_file: .env
+    ports:
+      - 8080:8080
+    links:
+      - "guacd:guacd"
+    networks:
+      - guac
+    depends_on:
+      - mysql
+      - guacd
+    restart: always
+  mysql:
+    image: bitnami/mariadb
+    container_name: mysql
+    # Only uncomment when need to initialize
+    ports:
+      - 127.0.0.1:3306:3306
+    volumes:
+      - /bitnami/mariadb
+      - ./initdb:/opt/initdb
+    networks:
+      - guac
+    restart: always
+    env_file: .env
+networks:
+  guac:
